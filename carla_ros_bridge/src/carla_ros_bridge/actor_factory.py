@@ -40,6 +40,7 @@ from carla_ros_bridge.rss_sensor import RssSensor
 from carla_ros_bridge.sensor import Sensor
 from carla_ros_bridge.spectator import Spectator
 from carla_ros_bridge.speedometer_sensor import SpeedometerSensor
+from carla_ros_bridge.speed_sas import SpeedSASSensor
 from carla_ros_bridge.tf_sensor import TFSensor
 from carla_ros_bridge.traffic import Traffic, TrafficLight
 from carla_ros_bridge.traffic_lights_sensor import TrafficLightsSensor
@@ -106,7 +107,7 @@ class ActorFactory(object):
         destroyed_actors = self._active_actors - current_actors
         self._active_actors = current_actors
 
-        # Create/destroy actors not managed by the bridge. 
+        # Create/destroy actors not managed by the bridge.
         self.lock.acquire()
         for actor_id in spawned_actors:
             carla_actor = self.world.get_actor(actor_id)
@@ -409,9 +410,11 @@ class ActorFactory(object):
                 actor = RssSensor(uid, name, parent, spawn_pose, self.node,
                                   carla_actor, self.sync_mode)
             elif carla_actor.type_id.startswith("sensor.other.lane_invasion"):
-                actor = LaneInvasionSensor(uid, name, parent, spawn_pose,
-                                           self.node, carla_actor,
-                                           self.sync_mode)
+                # actor = LaneInvasionSensor(uid, name, parent, spawn_pose,
+                #                            self.node, carla_actor,
+                #                            self.sync_mode)
+                actor = SpeedSASSensor(uid, name, parent, spawn_pose,
+                                       self.node, carla_actor, self.sync_mode)
             else:
                 actor = Sensor(uid, name, parent, spawn_pose, self.node,
                                carla_actor, self.sync_mode)

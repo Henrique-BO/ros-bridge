@@ -31,6 +31,7 @@ from carla_ros_bridge.actor_factory import ActorFactory
 from carla_ros_bridge.carla_status_publisher import CarlaStatusPublisher
 from carla_ros_bridge.debug_helper import DebugHelper
 from carla_ros_bridge.ego_vehicle import EgoVehicle
+from carla_ros_bridge.speed_sas import SpeedSASSensor
 from carla_ros_bridge.world_info import WorldInfo
 
 from carla_msgs.msg import CarlaControl, CarlaWeatherParameters
@@ -312,6 +313,11 @@ class CarlaRosBridge(CompatibleNode):
         """
         self.world_info.update(frame_id, timestamp)
         self.actor_factory.update_actor_states(frame_id, timestamp)
+
+        # Manually update SpeedSASSensor
+        for actor in self.actor_factory.actors.values():
+            if isinstance(actor, SpeedSASSensor):
+                actor.publish_data()
 
     def _ego_vehicle_control_applied_callback(self, ego_vehicle_id):
         if not self.sync_mode or \
